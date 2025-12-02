@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skooler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Skooler</h1>
+      <button class="settings-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <!-- Input Section -->
+      <section class="input-section">
+        <label for="sourceInput" class="label">Source Input</label>
+        <textarea 
+          id="sourceInput" 
+          class="textarea-input" 
+          placeholder="Paste message, comment, or post here..."
+          rows="4"
+        ></textarea>
+      </section>
+
+      <!-- Tone Selection -->
+      <section class="tone-section">
+        <label class="label">Tone</label>
+        <div class="tone-buttons">
+          <button class="tone-btn" data-tone="encouraging">Encouraging</button>
+          <button class="tone-btn" data-tone="direct">Direct</button>
+          <button class="tone-btn" data-tone="empathetic">Empathetic</button>
+          <button class="tone-btn" data-tone="salesy">Salesy</button>
+          <button class="tone-btn" data-tone="detailed">Detailed</button>
+          <button class="tone-btn" data-tone="concise">Concise</button>
+        </div>
+      </section>
+
+      <!-- Length Selection -->
+      <section class="length-section">
+        <label for="lengthSelect" class="label">Length</label>
+        <select id="lengthSelect" class="select-input">
+          <option value="short">Short (1-2 sentences)</option>
+          <option value="medium" selected>Medium (3-5 sentences)</option>
+          <option value="long">Long (2 paragraphs)</option>
+        </select>
+      </section>
+
+      <!-- Custom Refinement -->
+      <section class="refinement-section">
+        <label for="customRefinement" class="label">Custom Refinement (Optional)</label>
+        <input 
+          type="text" 
+          id="customRefinement" 
+          class="text-input" 
+          placeholder="e.g., Mention the new course"
+        >
+      </section>
+
+      <!-- Generate Button -->
+      <button class="generate-btn" id="generateBtn">
+        <span class="btn-text">Generate</span>
+        <span class="spinner" id="spinner" style="display: none;"></span>
+      </button>
+
+      <!-- Output Section -->
+      <section class="output-section" id="outputSection" style="display: none;">
+        <label class="label">Generated Response</label>
+        <div class="output-container">
+          <div class="output-text" id="outputText"></div>
+        </div>
+        <div class="output-actions">
+          <button class="action-btn copy-btn" id="copyBtn">Copy</button>
+          <select class="refine-select" id="refineSelect">
+            <option value="">Refine...</option>
+            <option value="shorter">Make it shorter</option>
+            <option value="formal">Make it more formal</option>
+            <option value="casual">Make it more casual</option>
+            <option value="emojis">Add relevant emojis</option>
+            <option value="grammar">Fix grammar</option>
+          </select>
+        </div>
+      </section>
+    </main>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel" style="display: none;">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="close-btn" id="closeSettingsBtn">✕</button>
+      </div>
+      
+      <div class="settings-content">
+        <!-- API Key Section -->
+        <section class="setting-section">
+          <label for="apiKeyInput" class="setting-label">Gemini API Key</label>
+          <input 
+            type="password" 
+            id="apiKeyInput" 
+            class="text-input" 
+            placeholder="Enter your Gemini API key"
+          >
+          <p class="setting-hint">Stored locally for development/testing</p>
+        </section>
+
+        <!-- Brand Voice Section -->
+        <section class="setting-section">
+          <div class="toggle-container">
+            <label for="brandVoiceToggle" class="toggle-label">Brand Voice</label>
+            <label class="switch">
+              <input type="checkbox" id="brandVoiceToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div id="brandVoiceContainer" style="display: none;">
+            <textarea 
+              id="brandVoiceInput" 
+              class="textarea-input brand-voice-textarea" 
+              placeholder="Enter your brand voice guidelines..."
+              rows="8"
+            ></textarea>
+            <div class="char-count">
+              <span id="charCount">0</span> / 10,000 characters
+            </div>
+          </div>
+        </section>
+
+        <!-- Auto-Copy Section -->
+        <section class="setting-section">
+          <div class="toggle-container">
+            <label for="autoCopyToggle" class="toggle-label">Auto-Copy</label>
+            <label class="switch">
+              <input type="checkbox" id="autoCopyToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <p class="setting-hint">Automatically copy generated response to clipboard</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="usage-info">
+        <span class="usage-text">Monthly Usage: <span id="usageCount">0</span> / <span id="usageLimit">300</span></span>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+      <button class="upgrade-btn" id="upgradeBtn" style="display: none;">Upgrade to Premium</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+

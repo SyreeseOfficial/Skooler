@@ -388,7 +388,7 @@ async function handleRefine() {
       body: JSON.stringify({
         systemInstruction: {
           parts: [{
-            text: 'Your response must be the raw, final output only. Do not include any introductory phrases, conversational comments, or concluding remarks like \'Here is your response\' or \'Does this sound alright?\'. Do not use any text formatting besides simple paragraphs and line breaks; do not use bold, italics, or other special characters as they are not supported by the platform. Bullet points are the only acceptable form of list formatting.'
+            text: 'Your response must be the raw, final output only. Do not include any em dahses. Do not include any introductory phrases, conversational comments, or concluding remarks like \'Here is your response\' or \'Does this sound alright?\'. Do not use any text formatting besides simple paragraphs and line breaks; do not use bold, italics, or other special characters as they are not supported by the platform. Bullet points are the only acceptable form of list formatting.'
           }]
         },
         contents: [{

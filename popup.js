@@ -457,7 +457,7 @@ function handleUpgrade() {
   const confirmed = confirm('This will open the upgrade page. Continue?');
   if (confirmed) {
     // Open upgrade URL
-    chrome.tabs.create({ url: 'https://skooler.app/upgrade-placeholder' });
+    chrome.tabs.create({ url: 'https://syreese.gumroad.com/l/skooler' });
 
     // Mock upgrade success (for testing)
     // In production, this would be handled by the upgrade page callback

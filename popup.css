@@ -398,6 +398,44 @@ input:checked + .slider:before {
   text-align: right;
 }
 
+/* License Key Section */
+.save-license-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4a9eff;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-license-btn:hover:not(:disabled) {
+  background-color: #3a8eef;
+}
+
+.save-license-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.license-message {
+  margin-top: 8px;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.license-message.error {
+  color: #ff6b6b;
+}
+
+.license-message.success {
+  color: #51cf66;
+}
+
 /* Footer */
 .footer {
   padding: 16px 20px;

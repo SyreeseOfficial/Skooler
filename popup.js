@@ -5,7 +5,8 @@ const STORAGE_KEYS = {
   AUTO_COPY: 'skooler_auto_copy',
   USAGE_COUNT: 'skooler_usage_count',
   USAGE_MONTH: 'skooler_usage_month',
-  IS_PREMIUM: 'skooler_is_premium'
+  IS_PREMIUM: 'skooler_is_premium',
+  LICENSE_KEY: 'skooler_license_key'
 };
 
 // Constants
@@ -49,6 +50,10 @@ function loadSettings() {
   // Auto-Copy
   const autoCopy = localStorage.getItem(STORAGE_KEYS.AUTO_COPY) === 'true';
   document.getElementById('autoCopyToggle').checked = autoCopy;
+
+  // License Key
+  const licenseKey = localStorage.getItem(STORAGE_KEYS.LICENSE_KEY) || '';
+  document.getElementById('licenseKeyInput').value = licenseKey;
 }
 
 // Setup event listeners
@@ -110,6 +115,9 @@ function setupEventListeners() {
 
   // Upgrade button
   document.getElementById('upgradeBtn').addEventListener('click', handleUpgrade);
+
+  // License key save button
+  document.getElementById('saveLicenseBtn').addEventListener('click', handleSaveLicense);
 }
 
 // Update character count
@@ -461,6 +469,69 @@ function handleUpgrade() {
         alert('Premium activated! Your limit is now 4,500 generations per month.');
       }
     }, 1000);
+  }
+}
+
+// Handle save license key
+async function handleSaveLicense() {
+  const licenseKeyInput = document.getElementById('licenseKeyInput');
+  const saveBtn = document.getElementById('saveLicenseBtn');
+  const messageDiv = document.getElementById('licenseMessage');
+  
+  const licenseKey = licenseKeyInput.value.trim();
+  
+  if (!licenseKey) {
+    messageDiv.textContent = 'Please enter a license key.';
+    messageDiv.className = 'license-message error';
+    return;
+  }
+
+  // Show loading state
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving...';
+  messageDiv.textContent = '';
+  messageDiv.className = 'license-message';
+
+  try {
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        license_key: licenseKey
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.valid === true) {
+      // Save license key and set premium status
+      localStorage.setItem(STORAGE_KEYS.LICENSE_KEY, licenseKey);
+      localStorage.setItem(STORAGE_KEYS.IS_PREMIUM, 'true');
+      
+      messageDiv.textContent = 'License key saved successfully! Premium activated.';
+      messageDiv.className = 'license-message success';
+      
+      // Update usage display to reflect premium status
+      updateUsageDisplay();
+    } else {
+      // Invalid license key
+      messageDiv.textContent = data.message || 'Invalid license key.';
+      messageDiv.className = 'license-message error';
+      
+      // Clear premium status if it was set
+      localStorage.setItem(STORAGE_KEYS.IS_PREMIUM, 'false');
+      updateUsageDisplay();
+    }
+  } catch (error) {
+    console.error('License validation error:', error);
+    messageDiv.textContent = 'Error validating license key. Please try again.';
+    messageDiv.className = 'license-message error';
+  } finally {
+    // Reset button state
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
   }
 }
 

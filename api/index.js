@@ -7,8 +7,19 @@ const GUMROAD_API_URL = 'https://api.gumroad.com/v2/licenses/verify';
 const PRODUCT_ID = 'iAae-VksZe5ls2taXmf-9A==';
 
 export default async (req, res) => {
+  // START NEW DEFENSIVE BLOCK
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch (e) {
+      // Do nothing if parsing fails, let the rest of the code handle it
+    }
+  }
+  // END NEW DEFENSIVE BLOCK
+
   // Handle license validation requests
-  if (req.method === 'POST' && req.body && req.body.license_key) {
+  if (req.method === 'POST' && body && body.license_key) {
     // 1. Securely access the Gumroad Access Token from environment variable
     const GUMROAD_ACCESS_TOKEN = process.env.GUMROAD_ACCESS_TOKEN;
 
@@ -18,7 +29,7 @@ export default async (req, res) => {
     }
 
     // 2. Read the license_key from the request body
-    const licenseKey = req.body.license_key;
+    const licenseKey = body.license_key;
 
     if (!licenseKey) {
       res.status(400).json({ valid: false, message: 'License key is required.' });

@@ -1,6 +1,5 @@
 // Storage Keys
 const STORAGE_KEYS = {
-  API_KEY: 'skooler_api_key',
   BRAND_VOICE_ENABLED: 'skooler_brand_voice_enabled',
   BRAND_VOICE_TEXT: 'skooler_brand_voice_text',
   AUTO_COPY: 'skooler_auto_copy',
@@ -12,8 +11,7 @@ const STORAGE_KEYS = {
 // Constants
 const FREE_LIMIT = 300;
 const PREMIUM_LIMIT = 4500;
-// PRD specifies gemini-2.5-flash. Update if the actual model name differs.
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const PROXY_URL = 'https://skooler.vercel.app/api';
 
 // State
 let selectedTone = null;
@@ -39,10 +37,6 @@ function initializeUI() {
 
 // Load settings from localStorage
 function loadSettings() {
-  // API Key
-  const apiKey = localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
-  document.getElementById('apiKeyInput').value = apiKey;
-
   // Brand Voice
   const brandVoiceEnabled = localStorage.getItem(STORAGE_KEYS.BRAND_VOICE_ENABLED) === 'true';
   document.getElementById('brandVoiceToggle').checked = brandVoiceEnabled;
@@ -87,11 +81,6 @@ function setupEventListeners() {
   document.getElementById('closeSettingsBtn').addEventListener('click', () => {
     document.getElementById('settingsPanel').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
-  });
-
-  // API Key input
-  document.getElementById('apiKeyInput').addEventListener('input', (e) => {
-    localStorage.setItem(STORAGE_KEYS.API_KEY, e.target.value);
   });
 
   // Brand Voice toggle
@@ -238,13 +227,6 @@ async function handleGenerate() {
     return;
   }
 
-  // Check API key
-  const apiKey = localStorage.getItem(STORAGE_KEYS.API_KEY);
-  if (!apiKey || !apiKey.trim()) {
-    alert('Please set your Gemini API key in Settings.');
-    return;
-  }
-
   // Check usage limit
   if (!checkUsageLimit()) {
     const isPremium = localStorage.getItem(STORAGE_KEYS.IS_PREMIUM) === 'true';
@@ -271,8 +253,7 @@ async function handleGenerate() {
 
     const prompt = buildPrompt(sourceText, tone, length, customRefinement, brandVoiceText);
 
-    const PROXY_URL = 'https://skooler.vercel.app/api';
-    const response = await fetch(PROXY_URL, { // Call the waiter instead of the direct API
+    const response = await fetch(PROXY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -352,14 +333,6 @@ async function handleRefine() {
     return;
   }
 
-  // Check API key
-  const apiKey = localStorage.getItem(STORAGE_KEYS.API_KEY);
-  if (!apiKey || !apiKey.trim()) {
-    alert('Please set your Gemini API key in Settings.');
-    refineSelect.value = '';
-    return;
-  }
-
   // Check usage limit
   if (!checkUsageLimit()) {
     const isPremium = localStorage.getItem(STORAGE_KEYS.IS_PREMIUM) === 'true';
@@ -381,8 +354,7 @@ async function handleRefine() {
   try {
     const prompt = buildRefinePrompt(currentOutput, refinementType);
 
-    const PROXY_URL = 'https://skooler.vercel.app/api'; // The FINAL, corrected, secure address!
-    const response = await fetch(PROXY_URL, { // Call the waiter instead of the direct API
+    const response = await fetch(PROXY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -390,7 +362,7 @@ async function handleRefine() {
       body: JSON.stringify({
         systemInstruction: {
           parts: [{
-            text: 'Your response must be the raw, final output only. Do not include any em dahses. Do not include any introductory phrases, conversational comments, or concluding remarks like \'Here is your response\' or \'Does this sound alright?\'. Do not use any text formatting besides simple paragraphs and line breaks; do not use bold, italics, or other special characters as they are not supported by the platform. Bullet points are the only acceptable form of list formatting.'
+            text: 'Your response must be the raw, final output only. Do not include any em dashes. Do not include any introductory phrases, conversational comments, or concluding remarks like \'Here is your response\' or \'Does this sound alright?\'. Do not use any text formatting besides simple paragraphs and line breaks; do not use bold, italics, or other special characters as they are not supported by the platform. Bullet points are the only acceptable form of list formatting.'
           }]
         },
         contents: [{

@@ -10,7 +10,7 @@ export default async (req, res) => {
   const API_KEY = process.env.MY_SECRET_API_KEY; 
 
   if (!API_KEY) {
-    res.status(500).send('Error: The API key is missing from the server setup!');
+    res.status(500).json({ error: { message: 'The API key is missing from the server setup!' } });
     return;
   }
   
@@ -37,6 +37,6 @@ export default async (req, res) => {
 
   } catch (error) {
     console.error('Proxy Error:', error);
-    res.status(500).send('An error occurred while fetching data from the external API.');
+    res.status(500).json({ error: { message: 'An error occurred while fetching data from the external API.' } });
   }
 };

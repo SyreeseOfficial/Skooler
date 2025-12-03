@@ -47,7 +47,7 @@ function loadSettings() {
   const brandVoiceEnabled = localStorage.getItem(STORAGE_KEYS.BRAND_VOICE_ENABLED) === 'true';
   document.getElementById('brandVoiceToggle').checked = brandVoiceEnabled;
   document.getElementById('brandVoiceContainer').style.display = brandVoiceEnabled ? 'block' : 'none';
-  
+
   const brandVoiceText = localStorage.getItem(STORAGE_KEYS.BRAND_VOICE_TEXT) || '';
   document.getElementById('brandVoiceInput').value = brandVoiceText;
   updateCharCount();
@@ -134,7 +134,7 @@ function checkUsageLimit() {
   const now = new Date();
   const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
   const storedMonth = localStorage.getItem(STORAGE_KEYS.USAGE_MONTH);
-  
+
   // Reset if new month
   if (storedMonth !== currentMonth) {
     localStorage.setItem(STORAGE_KEYS.USAGE_COUNT, '0');
@@ -153,7 +153,7 @@ function incrementUsage() {
   const now = new Date();
   const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
   const storedMonth = localStorage.getItem(STORAGE_KEYS.USAGE_MONTH);
-  
+
   if (storedMonth !== currentMonth) {
     localStorage.setItem(STORAGE_KEYS.USAGE_COUNT, '1');
     localStorage.setItem(STORAGE_KEYS.USAGE_MONTH, currentMonth);
@@ -161,7 +161,7 @@ function incrementUsage() {
     const currentCount = parseInt(localStorage.getItem(STORAGE_KEYS.USAGE_COUNT) || '0');
     localStorage.setItem(STORAGE_KEYS.USAGE_COUNT, String(currentCount + 1));
   }
-  
+
   updateUsageDisplay();
 }
 
@@ -170,7 +170,7 @@ function updateUsageDisplay() {
   const now = new Date();
   const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
   const storedMonth = localStorage.getItem(STORAGE_KEYS.USAGE_MONTH);
-  
+
   let usageCount = 0;
   if (storedMonth === currentMonth) {
     usageCount = parseInt(localStorage.getItem(STORAGE_KEYS.USAGE_COUNT) || '0');
@@ -232,7 +232,7 @@ function buildRefinePrompt(originalText, refinementType) {
 // Handle generate
 async function handleGenerate() {
   const sourceText = document.getElementById('sourceInput').value.trim();
-  
+
   if (!sourceText) {
     alert('Please paste some text in the source input field.');
     return;
@@ -256,7 +256,7 @@ async function handleGenerate() {
   const generateBtn = document.getElementById('generateBtn');
   const btnText = generateBtn.querySelector('.btn-text');
   const spinner = document.getElementById('spinner');
-  
+
   // Show loading state
   generateBtn.disabled = true;
   btnText.style.display = 'none';
@@ -271,7 +271,8 @@ async function handleGenerate() {
 
     const prompt = buildPrompt(sourceText, tone, length, customRefinement, brandVoiceText);
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    const PROXY_URL = 'https://skooler.vercel.app/api';
+    const response = await fetch(PROXY_URL, { // Call the waiter instead of the direct API
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -296,13 +297,13 @@ async function handleGenerate() {
     }
 
     const data = await response.json();
-    
+
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
       throw new Error('Invalid response format from API');
     }
 
     const generatedText = data.candidates[0].content.parts[0].text;
-    
+
     if (!generatedText) {
       throw new Error('No text generated');
     }
@@ -371,7 +372,7 @@ async function handleRefine() {
   const generateBtn = document.getElementById('generateBtn');
   const btnText = generateBtn.querySelector('.btn-text');
   const spinner = document.getElementById('spinner');
-  
+
   // Show loading state
   generateBtn.disabled = true;
   btnText.style.display = 'none';
@@ -380,7 +381,8 @@ async function handleRefine() {
   try {
     const prompt = buildRefinePrompt(currentOutput, refinementType);
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    const PROXY_URL = 'https://skooler.vercel.app/api'; // The FINAL, corrected, secure address!
+    const response = await fetch(PROXY_URL, { // Call the waiter instead of the direct API
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -405,13 +407,13 @@ async function handleRefine() {
     }
 
     const data = await response.json();
-    
+
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
       throw new Error('Invalid response format from API');
     }
 
     const refinedText = data.candidates[0].content.parts[0].text;
-    
+
     if (!refinedText) {
       throw new Error('No text generated');
     }
@@ -447,7 +449,7 @@ async function handleCopy() {
     alert('No output to copy.');
     return;
   }
-  
+
   await copyToClipboard(currentOutput);
 }
 
@@ -459,7 +461,7 @@ async function copyToClipboard(text) {
     const originalText = copyBtn.textContent;
     copyBtn.textContent = 'Copied!';
     copyBtn.style.backgroundColor = '#2a5a2a';
-    
+
     setTimeout(() => {
       copyBtn.textContent = originalText;
       copyBtn.style.backgroundColor = '';
@@ -476,7 +478,7 @@ function handleUpgrade() {
   if (confirmed) {
     // Open upgrade URL
     chrome.tabs.create({ url: 'https://skooler.app/upgrade-placeholder' });
-    
+
     // Mock upgrade success (for testing)
     // In production, this would be handled by the upgrade page callback
     setTimeout(() => {

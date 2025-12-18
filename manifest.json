@@ -4,8 +4,7 @@
   "version": "1.0.0",
   "description": "AI-powered response generator with brand voice consistency",
   "permissions": [
-    "clipboardWrite",
-    "storage"
+    "clipboardWrite"
   ],
   "host_permissions": [
     "https://skooler.vercel.app/*"
@@ -27,4 +26,3 @@
     "128": "icons/icon128.png"
   }
 }
-
